@@ -1,0 +1,70 @@
+services:
+  # Backend Service (OpenSign Server)
+  - type: web
+    name: opensign-server
+    runtime: node
+    region: oregon
+    plan: starter
+    buildCommand: cd apps/OpenSignServer && npm ci
+    startCommand: cd apps/OpenSignServer && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ID
+        value: opensign
+      - key: appName
+        value: OpenSign
+      - key: MASTER_KEY
+        generateValue: true
+        sync: false
+      - key: MONGODB_URI
+        fromDatabase:
+          name: opensign-mongodb
+          property: connectionString
+      - key: PARSE_MOUNT
+        value: /app
+      - key: SERVER_URL
+        value: https://opensign-server.onrender.com/app
+      - key: USE_LOCAL
+        value: true
+      - key: SMTP_ENABLE
+        value: true
+      - key: SMTP_HOST
+        value: smtp.umbler.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER_EMAIL
+        value: naoresponda@efoconecta.online
+      - key: SMTP_PASS
+        value: 478E-rb(iT7Lu
+      - key: PORT
+        value: 8080
+    healthCheckPath: /app/health
+
+  # Frontend Service (OpenSign React App)
+  - type: web
+    name: opensign-frontend
+    runtime: node
+    region: oregon
+    plan: starter
+    buildCommand: cd apps/OpenSign && npm ci && npm run build
+    startCommand: cd apps/OpenSign && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_URL
+        value: https://opensign-frontend.onrender.com
+      - key: REACT_APP_SERVERURL
+        value: https://opensign-server.onrender.com/api/app
+      - key: REACT_APP_APPID
+        value: opensign
+      - key: GENERATE_SOURCEMAP
+        value: false
+      - key: PORT
+        value: 3000
+
+databases:
+  - name: opensign-mongodb
+    databaseName: opensign
+    plan: starter
+    region: oregon
