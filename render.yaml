@@ -8,6 +8,7 @@ services:
     buildCommand: cd apps/OpenSignServer && npm ci
     startCommand: cd apps/OpenSignServer && npm start
     envVars:
+      # App Config
       - key: NODE_ENV
         value: production
       - key: APP_ID
@@ -15,18 +16,21 @@ services:
       - key: appName
         value: OpenSign
       - key: MASTER_KEY
-        generateValue: true
-        sync: false
-      - key: MONGODB_URI
-        fromDatabase:
-          name: opensign-mongodb
-          property: connectionString
+        value: 9HFhqrjDtIYf1lJ4
       - key: PARSE_MOUNT
         value: /app
+      - key: PORT
+        value: 8080
+      
+      # MongoDB Atlas
+      - key: MONGODB_URI
+        value: mongodb+srv://opensign_user:l3UtJZj4RUx9CkJI@opensign-db.rio37ak.mongodb.net/opensign?appName=opensign-db
+      
+      # URLs (atualize depois com URLs reais)
       - key: SERVER_URL
-        value: https://opensign-server.onrender.com/app
-      - key: USE_LOCAL
-        value: true
+        sync: false
+      
+      # SMTP Umbler
       - key: SMTP_ENABLE
         value: true
       - key: SMTP_HOST
@@ -37,8 +41,22 @@ services:
         value: naoresponda@efoconecta.online
       - key: SMTP_PASS
         value: 478E-rb(iT7Lu
-      - key: PORT
-        value: 8080
+      
+      # Cloudflare R2 Storage
+      - key: USE_LOCAL
+        value: false
+      - key: DO_SPACE
+        value: opensign-files
+      - key: DO_ENDPOINT
+        value: cc024698dc0189c7f1a75f15f1b5e25e.r2.cloudflarestorage.com
+      - key: DO_BASEURL
+        value: https://opensign-files.cc024698dc0189c7f1a75f15f1b5e25e.r2.dev
+      - key: DO_ACCESS_KEY_ID
+        value: ea7e421f8f2972f865ffa01b6d45fbd5
+      - key: DO_SECRET_ACCESS_KEY
+        value: cf0d16a9baf2566d97c559e2f5e14a8262780d9617f1c34a795dfa91747acb2a
+      - key: DO_REGION
+        value: auto
     healthCheckPath: /app/health
 
   # Frontend Service (OpenSign React App)
@@ -52,19 +70,15 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PUBLIC_URL
-        value: https://opensign-frontend.onrender.com
-      - key: REACT_APP_SERVERURL
-        value: https://opensign-server.onrender.com/api/app
       - key: REACT_APP_APPID
         value: opensign
       - key: GENERATE_SOURCEMAP
         value: false
       - key: PORT
         value: 3000
-
-databases:
-  - name: opensign-mongodb
-    databaseName: opensign
-    plan: starter
-    region: oregon
+      
+      # URLs (atualize depois com URLs reais dos serviços)
+      - key: PUBLIC_URL
+        sync: false
+      - key: REACT_APP_SERVERURL
+        sync: false
